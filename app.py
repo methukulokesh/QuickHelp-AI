@@ -127,7 +127,7 @@ if prompt:
                 provider=provider,
                 model=model,
                 context=context,
-                history=load_history()[-8:],
+                history=load_history()[-9:-1],
                 tool_result=tool_result,
                 memory=personal_memory,
             )
