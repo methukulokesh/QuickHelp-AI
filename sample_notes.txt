@@ -1,0 +1,9 @@
+QuickHelp AI Project Notes
+
+QuickHelp AI is a conversational assistant developed using Python and Streamlit.
+
+It uses the Qwen 2.5 3B model through Ollama for local AI responses.
+
+The application supports PDF, DOCX, TXT and Markdown document uploads.
+
+Its document processing system extracts text, divides it into smaller chunks and retrieves relevant information for answering user questions.
