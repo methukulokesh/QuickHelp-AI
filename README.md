@@ -1,76 +1,176 @@
-# QuickHelp AI
+# QuickHelp AI 🤖
 
-QuickHelp AI is a Python + Streamlit assistant MVP that combines an LLM chat interface, local document retrieval (RAG-style), SQLite conversation history, and a safe arithmetic tool.
+QuickHelp AI is a Python-based conversational AI assistant built with Streamlit. It combines local Large Language Model (LLM) integration, document-based question answering, persistent conversation history, personal memory, and a safe arithmetic calculator in one application.
 
 ## Features
 
-- Chat interface built with Streamlit.
-- Choose a local Ollama model or OpenAI API from the sidebar.
-- Upload PDF, DOCX, TXT, and Markdown files.
-- Extract and chunk documents, then retrieve relevant passages with TF-IDF similarity.
-- Persist conversation messages in SQLite.
-- Basic arithmetic tool uses Python AST parsing (not `eval`).
-- Clear conversation history from the sidebar.
+- **AI Chat Interface:** Interactive conversational interface built using Streamlit.
+- **Multiple LLM Providers:** Supports local Ollama models and the OpenAI API.
+- **Document Upload:** Supports PDF, DOCX, TXT, and Markdown files.
+- **Document Retrieval (RAG-style):** Extracts and chunks document content and retrieves relevant passages using TF-IDF similarity.
+- **Conversation History:** Stores conversation messages persistently using SQLite.
+- **Personal Memory:** Stores supported personal facts for use in future conversations.
+- **Safe Calculator:** Performs arithmetic operations using Python AST parsing instead of `eval()`.
+- **Clear History:** Allows users to clear conversation history from the sidebar.
+
+## Technologies Used
+
+| Technology | Purpose |
+|---|---|
+| Python | Core application development |
+| Streamlit | User interface |
+| Ollama | Local LLM integration |
+| Qwen 2.5 3B | Local language model tested |
+| OpenAI API | Optional cloud LLM provider |
+| SQLite | Conversation history and memory |
+| Scikit-learn | TF-IDF document retrieval |
+| PyPDF | PDF text extraction |
+| python-docx | DOCX text extraction |
 
 ## Architecture
 
 ```text
-Streamlit UI (app.py)
-   |-- Chat engine (src/chat_engine.py) ---- Ollama / OpenAI
-   |-- Document store (src/document_store.py) -- TF-IDF retrieval
-   |-- Memory store (src/memory_store.py) ----- SQLite
-   |-- Utility tool (src/tools.py) ------------ safe calculator
+                    User
+                      |
+                Streamlit UI
+                  (app.py)
+                      |
+        +-------------+-------------+
+        |             |             |
+   Chat Engine   Document Store   Memory Store
+(chat_engine.py) (document_store.py) (memory_store.py)
+        |             |             |
+   Ollama/API     TF-IDF Search    SQLite
+        |
+   AI Response
+
+              Utility Tool
+                tools.py
+             Safe Calculator
 ```
 
-## Run locally
+## Project Structure
 
-1. Install Python 3.10 or newer.
-2. Open a terminal in this project folder.
-3. Create and activate a virtual environment:
+```text
+QuickHelp-AI/
+│
+├── app.py
+├── requirements.txt
+├── .env.example
+├── .gitignore
+├── README.md
+│
+├── src/
+│   ├── chat_engine.py
+│   ├── document_store.py
+│   ├── memory_store.py
+│   └── tools.py
+│
+├── tests/
+│
+├── data/
+│   └── documents/
+│
+└── screenshots/
+```
 
-   Windows PowerShell:
-   ```powershell
-   py -m venv .venv
-   .venv\\Scripts\\Activate.ps1
-   ```
+## Installation and Setup
 
-4. Install dependencies:
-   ```powershell
-   pip install -r requirements.txt
-   ```
+### 1. Clone the repository
 
-5. Copy `.env.example` to `.env`. For OpenAI, add your API key. Never commit `.env`.
-6. Start the app:
-   ```powershell
-   streamlit run app.py
-   ```
-
-### Local Ollama option
-
-Install Ollama separately, then run:
 ```powershell
-ollama pull llama3.2
-ollama serve
+git clone https://github.com/methukulokesh/QuickHelp-AI.git
+cd QuickHelp-AI
 ```
-Choose **Ollama (local)** in the app sidebar. Ollama must be running on the same machine.
 
-### OpenAI option
-
-Set `OPENAI_API_KEY` in `.env`, run the app, and select **OpenAI API** in the sidebar. API usage may incur charges.
-
-## Test
+### 2. Create a virtual environment
 
 ```powershell
-python -m unittest discover -s tests -v
+py -m venv .venv
+.venv\Scripts\Activate.ps1
 ```
 
-## Current MVP scope and limitations
+### 3. Install dependencies
 
-- TF-IDF is a lightweight lexical retrieval baseline, not a vector database or embedding model.
-- The model provider must be configured by the user; this repository does not include an API key or bundled LLM.
-- PDF extraction works for text-based PDFs; scanned PDFs need OCR, which is not included.
-- This is a local learning/portfolio MVP, not a production-hardened service. Authentication, deployment, role-based access, and advanced agent planning are not included.
+```powershell
+pip install -r requirements.txt
+```
 
-## Project objective
+### 4. Configure environment variables
 
-Demonstrate how an AI assistant can combine language-model responses, retrieval from user-provided documents, persistent conversation history, and a small deterministic tool in one usable application.
+Copy `.env.example` to `.env`.
+
+For OpenAI, configure your API key in `.env`:
+
+```env
+OPENAI_API_KEY=your_api_key
+OPENAI_MODEL=gpt-4o-mini
+OLLAMA_MODEL=qwen2.5:3b
+OLLAMA_BASE_URL=http://localhost:11434
+```
+
+Never commit your `.env` file or expose API keys.
+
+## Running with Ollama (Local)
+
+1. Install Ollama from https://ollama.com/
+2. Download the tested model:
+
+```powershell
+ollama pull qwen2.5:3b
+```
+
+3. Start the application:
+
+```powershell
+streamlit run app.py
+```
+
+4. Select **Ollama (local)** in the sidebar.
+
+Ollama must be running on the same machine as the application.
+
+## Running with OpenAI API (Optional)
+
+1. Configure `OPENAI_API_KEY` in your `.env` file.
+2. Start the application.
+3. Select **OpenAI API** in the sidebar.
+
+OpenAI API usage may incur charges depending on account credits and pricing.
+
+## Running Tests
+
+Run the automated tests using:
+
+```powershell
+py -3.13 -m pytest -v
+```
+
+## Screenshots
+
+Add application screenshots to the `screenshots/` directory and display them here.
+
+Example:
+
+```markdown
+![QuickHelp AI Interface](screenshots/home.png)
+![Document Retrieval](screenshots/document-retrieval.png)
+```
+
+## Current MVP Scope and Limitations
+
+- TF-IDF is a lightweight lexical retrieval baseline, not an embedding-based vector database.
+- The application requires a configured LLM provider.
+- PDF extraction supports text-based PDFs; scanned PDFs require OCR, which is not included.
+- A locally running Ollama server is not directly accessible to a separately hosted cloud application.
+- Authentication, role-based access, production deployment hardening, and advanced agent planning are not included.
+
+## Project Objective
+
+The objective of QuickHelp AI is to demonstrate how an AI assistant can combine language-model responses, retrieval from user-provided documents, persistent conversation history, personal memory, and deterministic utility tools in one usable application.
+
+## Author
+
+Developed as a practical AI assistant project using Python and open-source technologies.
+
+**GitHub:** https://github.com/methukulokesh/QuickHelp-AI
